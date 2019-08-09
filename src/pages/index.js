@@ -1,13 +1,13 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
 import Img from "gatsby-image"
-
 import Layout from "../components/layout"
+import ReactMarkdown from "react-markdown"
 
+import "../styles/global.css"
 
 const IndexPage = ({ data }) => (
   <Layout>
-    
     <h1>Hi people</h1>
     <p>Welcome to your new Gatsby site.</p>
     <p>Now go build something great.</p>
@@ -15,23 +15,29 @@ const IndexPage = ({ data }) => (
       {data.allStrapiArticle.edges.map(document => (
         <li key={document.node.id}>
           <h2>
-            <Link to={`/${document.node.id}`}>
-              {document.node.title}
-            </Link>
+            <Link to={`/${document.node.id}`}>{document.node.title}</Link>
           </h2>
-          <Img fixed={document.node.image.childImageSharp.fixed}/>
+          <Img fixed={document.node.image.childImageSharp.fixed} />
+          <ReactMarkdown
+            source={document.node.content.substring(0, 500).concat("...")}
+            transformImageUri={uri =>
+              uri.startsWith("http")
+                ? uri
+                : `${process.env.IMAGE_BASE_URL}${uri}`
+            }
+            className="indexArticle"
+            escapeHtml={false}
+          />
 
-          <p>{document.node.content}</p>
-
+          <Link to={`/${document.node.id}`}>Read more</Link>
         </li>
       ))}
     </ul>
-    
     <Link to="/page-2/">Go to page 2</Link>
   </Layout>
 )
 
-export default IndexPage 
+export default IndexPage
 
 export const pageQuery = graphql`
   query IndexQuery {
@@ -53,4 +59,3 @@ export const pageQuery = graphql`
     }
   }
 `
-
